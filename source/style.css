@@ -29,6 +29,7 @@ body {
     width: var(--dice-size);
     height: var(--dice-size);
     perspective: var(--dice-perspective);
+    margin:var(--dice-half);
 }
     #dice-result {
         font-family: sans-serif;
@@ -81,7 +82,7 @@ body {
                 font-weight: 300;
             }
                 .face.face-inner, .face-fill {
-                    background-color: var(--dice-inner-color);;
+                    background-color: var(--dice-inner-color);
                     box-shadow: none;
                 }
                 .face-fill {
@@ -89,7 +90,6 @@ body {
                     transform: translateZ(0px);
                 }
                     .face-fill-x { transform: rotateY(90deg); }
-                    .face-fill-y {}
                     .face-fill-z { transform: rotateX(90deg); }
                 .face-content {
                     position: absolute;
@@ -97,23 +97,17 @@ body {
                     top:50%;
                     transform: translate(-50%, -50%);
                 }
-                    .face-front { transform: rotateX(90deg) translateZ(var(--dice-half)); }
-                    .face-back { transform: rotateX(-90deg) translateZ(var(--dice-half)); }
-                    .face-right { transform: rotateY(90deg) translateZ(var(--dice-half)); }
-                    .face-left { transform: rotateY(-90deg) translateZ(var(--dice-half)); }
-                    .face-top { transform: rotateY(0deg) translateZ(var(--dice-half)); }
-                    .face-bottom { transform: rotateY(180deg) translateZ(var(--dice-half)); }
+                    
+                    .face-1 { transform: rotateX(-90deg) translateZ(var(--dice-half)); }
+                    .face-2 { transform: rotateY(90deg) translateZ(var(--dice-half)); }
+                    .face-3 { transform: rotateY(0deg) translateZ(var(--dice-half)); }
+                    .face-4 { transform: rotateY(180deg) translateZ(var(--dice-half)); }
+                    .face-5 { transform: rotateY(-90deg) translateZ(var(--dice-half)); }
+                    .face-6 { transform: rotateX(90deg) translateZ(var(--dice-half)); }
 
-                    .face-inner-front { transform: rotateX(90deg) translateZ(var(--dice-half-small)); }
-                    .face-inner-back { transform: rotateX(-90deg) translateZ(var(--dice-half-small)); }
-                    .face-inner-right { transform: rotateY(90deg) translateZ(var(--dice-half-small)); }
-                    .face-inner-left { transform: rotateY(-90deg) translateZ(var(--dice-half-small)); }
-                    .face-inner-top { transform: rotateY(0deg) translateZ(var(--dice-half-small)); }
-                    .face-inner-bottom { transform: rotateY(180deg) translateZ(var(--dice-half-small)); }
-                    
-                      
-                    
-                      
-                    
-                      
-                    
+                    .face-inner-1 { transform: rotateX(-90deg) translateZ(var(--dice-half-small)); }
+                    .face-inner-2 { transform: rotateY(90deg) translateZ(var(--dice-half-small)); }
+                    .face-inner-3 { transform: rotateY(0deg) translateZ(var(--dice-half-small)); }
+                    .face-inner-4 { transform: rotateY(180deg) translateZ(var(--dice-half-small)); }
+                    .face-inner-5 { transform: rotateY(-90deg) translateZ(var(--dice-half-small)); }
+                    .face-inner-6 { transform: rotateX(90deg) translateZ(var(--dice-half-small)); }

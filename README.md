@@ -32,6 +32,14 @@ There are a few settings you can adjust that will have impact on the visual rend
 
 which represents the maximum number of turns the dice may roll. By default, I set it to 4 because it seems to me a decent roll number close to my real life experiment of RPG.
 
+## TO-DO
+### Vanilla Version
+* Choose number of faces (4, (6), 8, 10, 20)
+* Manage image texture for each face
+
+### Wordpress Version
+* Control number of dices from back-end interface
+* Control how to display result from back-end interface
 
 ## CREDITS
 Tamer Aydin, for them idea on how to have a rounder corner rendering of the dice: https://codepen.io/tameraydin/pen/kMYreE

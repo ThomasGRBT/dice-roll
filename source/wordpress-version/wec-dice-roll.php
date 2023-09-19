@@ -14,7 +14,7 @@
     exit;
  }
 
- class SimpleContactForm {
+ class WECDiceRoll {
 
     public function __construct()
     {
@@ -91,4 +91,4 @@
 
  }
 
- new SimpleContactForm;
+ new WECDiceRoll;

@@ -19,7 +19,7 @@
     public function __construct()
     {
         // Create custom post type
-        add_action('init', array($this, 'create_custom_post_type'));
+        add_action( 'admin_menu', array($this, 'create_admin_menu'));
 
         // add asset (js, css, etc)
         add_action('wp_enqueue_scripts', array($this, 'load_assets'));
@@ -32,24 +32,16 @@
     }
 
     // Create Plugin Menu in Back End
-    public function create_custom_post_type()
+    public function create_admin_menu()
     {
-        $myVariables = array(
-
-                'public' => true,
-                'has_archive' => true,
-                'supports' => array('title'),
-                'exclude_from_search' => true,
-                'public_queryable' => false,
-                'capability' => 'manage_otpions',
-                'labels' => array(
-                    'name' => 'WEC - Roll The Dice!',
-                    'singular_name' => 'WEC Roll The Dice'
-                ),
-                'menu-icon' => 'dashicons-games',
-            );
-
-            register_post_type('wec_dice_roll', $myVariables);
+        add_menu_page (
+            'WEC Roll The Dice!', // page title
+            'WEC Dice Roll', // menu title
+            'manage_options',
+            plugin_dir_path(__FILE__) . 'admin/view.php', //url to admin page
+            null,
+            'dashicons-games',
+        );
     }
 
     // Load CSS, JS and more

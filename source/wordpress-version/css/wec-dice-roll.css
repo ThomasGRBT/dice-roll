@@ -1,7 +1,7 @@
 :root {
 
     /* ARBITRARY, choose whatever you want */
-    --dice-size: 20vmin;
+    --dice-size: 15vmin;
 
     --dice-color-h: 162;
     --dice-color-s: 100%;
@@ -10,15 +10,23 @@
     --dice-shadow-intensity: 20%;
 
     /* CALCULATED, do not touch*/
-    --dice-perspective: calc( var(--dice-size) * 3);
+    --dice-perspective: calc( var(--dice-size) * 2);
     --dice-half: calc( var(--dice-size) / 2);
     --dice-half-small: calc( var(--dice-half) - 2px);
-    --dice-border-radius: calc( var(--dice-size) * 0.16);
+    --dice-border-radius: calc( var(--dice-size) * 0.12);
     --dice-color: hsl( var(--dice-color-h), var(--dice-color-s), var(--dice-color-l));
     --dice-shadow-l: calc( var(--dice-color-l) - var(--dice-shadow-intensity) );
     --dice-shadow-color: hsl( var(--dice-color-h), var(--dice-color-s), var(--dice-shadow-l));
     --dice-inner-l: calc( var(--dice-color-l) - (var(--dice-shadow-intensity) / 1.5 ) );
     --dice-inner-color: hsl( var(--dice-color-h), var(--dice-color-s), var(--dice-inner-l));
+
+    --dice-disable-color: hsl( var(--dice-color-h), calc( var(--dice-color-s) - 10%), calc( var(--dice-color-l) - 15%));
+    --dice-disable-shadow-color: hsl( var(--dice-color-h), calc( var(--dice-color-s) - 10%),  calc( var(--dice-shadow-l) - 15%));
+    --dice-disable-inner-color: hsl( var(--dice-color-h), calc( var(--dice-color-s) - 10%), calc( var(--dice-color-l) - 15%));
+
+    --dice-hover-color: hsl( var(--dice-color-h), calc( var(--dice-color-s) + 10%), calc( var(--dice-color-l) + 15%));
+    --dice-hover-shadow-color: hsl( var(--dice-color-h), calc( var(--dice-color-s) + 10%),  calc( var(--dice-shadow-l) + 15%));
+    --dice-hover-inner-color: hsl( var(--dice-color-h), calc( var(--dice-color-s) + 10%), calc( var(--dice-color-l) + 15%));
 }
 
 .dice-wrapper {
@@ -26,7 +34,7 @@
     height: var(--dice-size);
     perspective: var(--dice-perspective);
     margin: calc(var(--dice-half)/1.75);
-    display: inline-flex;
+    display: inline-block;
 }
     #dice-result {
         font-family: sans-serif;
@@ -35,13 +43,19 @@
     }
     .dice-btn {
         display: block;
-        margin:20px auto var(--dice-half) auto;
+        margin:20px auto;
         padding:12px;
         border-radius: 2em;
         cursor: pointer;
     }
     
     .dice-btn:hover {}
+
+    .dice-score {
+        margin: 2em auto 0.5em auto;
+    }
+
+    .dice-score-total {}
 
     .dice {
         cursor: pointer;
@@ -52,6 +66,25 @@
         transform-style: preserve-3d;
         transition:  transform 1000ms;
     }
+
+    .dice.disable .face {
+        background: var(--dice-disable-color);
+        box-shadow:inset 0 0 var(--dice-border-radius) var(--dice-disable-shadow-color);
+    }
+    .dice.disable .face.face-inner,.dice.disable .face-fill {
+        background-color: var(--dice-disable-inner-color);
+        box-shadow: none;
+    }
+
+    .dice.disable:hover .face, .dice:hover .face{
+        background: var(--dice-hover-color);
+        box-shadow:inset 0 0 var(--dice-border-radius) var(--dice-hover-shadow-color);
+    }
+    .dice.disable:hover .face.face-inner,.dice.disable:hover .face-fill, .dice:hover .face.face-inner,.dice:hover .face-fill {
+        background-color: var(--dice-hover-inner-color);
+        box-shadow: none;
+    }
+
         .dice.show-front { transform: translateZ(calc(var(--dice-half) * -1)) rotateY(0deg); }
         .dice.show-back { transform: translateZ(calc(var(--dice-half) * -1)) rotateY(-180deg); }
         .dice.show-right { transform: translateZ(calc(var(--dice-half) * -1)) rotateY(-90deg); }
@@ -104,10 +137,3 @@
                     .face-inner-4 { transform: rotateY(180deg) translateZ(var(--dice-half-small)); }
                     .face-inner-5 { transform: rotateY(-90deg) translateZ(var(--dice-half-small)); }
                     .face-inner-6 { transform: rotateX(90deg) translateZ(var(--dice-half-small)); }
-                    
-                      
-                    
-                      
-                    
-                      
-                    

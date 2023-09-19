@@ -9,6 +9,7 @@
     let rotationDirection = "";
 
     // You can tune these ones
+    const myDiceBoard = document.getElementById('wec-dice-roll-container');
     const arbitraryMaxXTurnNumber = 4;
     const arbitraryMaxYTurnNumber = arbitraryMaxXTurnNumber; // Could be change
     const arbitraryMaxNullTurnNumber = 3;
@@ -18,9 +19,11 @@
     let score = 0
 
 // CREATE DOM DICE ELEMENT
-function createDice(diceLength, parentElem, optButton) {
+function createDice(diceLength, parentElem, optButton, optScore) {
 
     for ( i = 1; i <= diceLength; i++) {
+
+        resultBoard.length = diceLength;
 
         const newDiceWrapper = document.createElement("div");
             newDiceWrapper.classList.add("dice-wrapper");
@@ -29,6 +32,7 @@ function createDice(diceLength, parentElem, optButton) {
             let diceId = "dice-"+i;
             newDice.setAttribute("id", diceId);
             newDice.classList.add("dice");
+            newDice.classList.add("disable");
 
         // faces
         for ( j = 1; j <= 6 ; j++ ) {
@@ -56,9 +60,22 @@ function createDice(diceLength, parentElem, optButton) {
             createRollButton("dice-btn-one", "dice-"+i, myDiceBoard);
         }
 
+        // optional : show individual score
+        if ( optScore ) {
+            newDice.classList.add('show-dice-score');
+
+            const newDiceScore = document.createElement("p");
+                newDiceScore.classList.add('dice-score');
+                newDiceScore.innerHTML = "Score: 0";
+                newDiceWrapper.appendChild(newDiceScore);
+        }
+
+        // Set Animation
         newDice.addEventListener("click", function() {
-            rollDice(diceId);
+            myDiceBoard.classList.remove('roll-all');
+            rollDice(diceId, true, true);
         });
+
     }     
 }
 
@@ -77,30 +94,42 @@ function createRollButton(buttonId, diceId, parentElem) {
         newButton.innerHTML = "Let's Roll !!"
 
     newButton.addEventListener("click", function() {
-            rollDice(diceId);
+            rollDice(diceId, true, true);
         });
 
     parentElem.appendChild(newButton);
 }
 
 // CREATE DOM BUTTON ELEMENT TO ROLL ALL DICES
-function createRollAllButton(buttonId, parentElem) {
+function createRollAllButton(buttonId, parentElem, optScore) {
 
     const newButton = document.createElement("button");
        newButton.setAttribute("id", buttonId);
        newButton.classList.add("dice-btn");
-       newButton.innerHTML = "Let's Roll ALL !!"
+       newButton.innerHTML = "Roll The Dice!"
 
        let diceList = getDiceList();
 
    newButton.addEventListener("click", function() {
         for ( k = 0 ; k < diceList.length ; k++ ) {
             let thisDiceId = diceList[k].getAttribute("id");
-            rollDice(thisDiceId);
-        } 
+            myDiceBoard.classList.add('roll-all');
+            rollDice(thisDiceId, false, false);
+        }
+
    });
 
    parentElem.appendChild(newButton);
+
+   // optional : show individual score
+   if ( optScore ) {
+    parentElem.classList.add('show-total-score');
+
+    const newTotalDiceScore = document.createElement("p");
+        newTotalDiceScore.classList.add('dice-score-total');
+        newTotalDiceScore.innerHTML = "Total score: 0";
+        parentElem.appendChild(newTotalDiceScore);
+    }
 }
 
 // BASIC RANDOM MATH FUNCTION
@@ -109,13 +138,62 @@ function randomMinMax(min, max) {
 }
 
 // LET'S ROLLE THE DICE !
-function rollDice(diceId) {
+function rollDice(diceId, optDisable, optNoSum) {
 
-    let elem = document.getElementById(diceId);
+    let theDice = document.getElementById(diceId);
 
+    // LIST ALL SIBLINGS
+    let theDiceParent = theDice.parentElement;
+    let theDiceParentSiblings = [];
+    let theDiceParentSibling = theDiceParent.parentNode.firstChild;
+
+        if(!theDiceParent.parentNode) {
+            theDiceParentSiblings = [];
+        }
+
+        while (theDiceParentSibling) {
+            if(theDiceParentSibling.nodeType === 1 && theDiceParentSibling !== theDiceParent) {
+                theDiceParentSiblings.push(theDiceParentSibling);
+            }
+            theDiceParentSibling = theDiceParentSibling.nextSibling;
+        }
+
+    // OPTION: Visually disable other dice when rolling just one among many
+    if ( optDisable ) {
+        // TRUE : Used when clicking just one dice
+        for ( g = 0 ; g < theDiceParentSiblings.length ; g ++) {
+
+            let siblingDice = theDiceParentSiblings[g].getElementsByClassName('dice')[0];
+
+            if ( typeof siblingDice !== 'undefined' ) {
+                siblingDice.classList.add('disable');
+            }  
+        }
+
+        theDice.classList.remove('disable');
+    } else {
+        // FALSE: Used when clicking the Roll All Dice button
+        theDice.classList.remove('disable');
+    }
+
+    // OPTION: When rolling just one dice, reset all the others so the sum is equal to this dice result
+    if ( optNoSum ) {
+        for ( h = 0 ; h < theDiceParentSiblings.length ; h ++) {
+
+            console.log(resultBoard[h]);
+
+            if ( typeof siblingDice !== 'undefined' ) {
+                
+            }  
+        }
+
+    } else {
+
+    }
+
+    // CORE RANDOM
     let randomNumber = randomMinMax(1, diceMaxNumber);
     let diceResult = randomNumber;
-    let totalResult = 0;
 
     let randomBoolean = randomMinMax(0, 1);
     if ( randomBoolean === 0 ) {
@@ -147,7 +225,7 @@ function rollDice(diceId) {
             if ( randomNumber === lastNumber ) {
                 quarterXDegree = lastXRotation + 360;                
             }
-            elem.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + quarterXDegree +"deg) rotateY(" + rotationDirection + rotateFullTurnsOrNothing+"deg)";
+            theDice.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + quarterXDegree +"deg) rotateY(" + rotationDirection + rotateFullTurnsOrNothing+"deg)";
             lastNumber = 1;
             lastXRotation = quarterXDegree;
             lastYRotation = 0;
@@ -157,7 +235,7 @@ function rollDice(diceId) {
             if ( randomNumber === lastNumber ) {
                 quarterYDegree = lastYRotation + 360;                
             }
-            elem.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + rotationDirection + rotateFullTurnsOrNothing + "deg) rotateY(-" + quarterYDegree + "deg)";
+            theDice.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + rotationDirection + rotateFullTurnsOrNothing + "deg) rotateY(-" + quarterYDegree + "deg)";
             lastNumber = 2;
             lastXRotation = 0;
             lastYRotation = quarterYDegree;
@@ -167,11 +245,11 @@ function rollDice(diceId) {
             if ( randomNumber === lastNumber ) {
                 quarterXDegree = lastXRotation + randomXTurnsDegree;
                 quarterYDegree = lastYRotation + randomYTurnsDegree;
-                elem.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + quarterXDegree + "deg) rotateY(" + quarterYDegree + "deg)";
+                theDice.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + quarterXDegree + "deg) rotateY(" + quarterYDegree + "deg)";
                 lastXRotation = quarterXDegree;
                 lastYRotation = quarterYDegree;
             } else {
-                elem.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + rotationDirection + rotateFullTurnsOrNothing + "deg) rotateY(" + rotationDirection + rotateFullTurnsOrNothing + "deg)";
+                theDice.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + rotationDirection + rotateFullTurnsOrNothing + "deg) rotateY(" + rotationDirection + rotateFullTurnsOrNothing + "deg)";
                 lastXRotation = 0;
                 lastYRotation = 0;
             }
@@ -182,7 +260,7 @@ function rollDice(diceId) {
             if ( randomNumber === lastNumber ) {          
                 halfYDegree = lastYRotation + 360;              
             }
-            elem.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + rotationDirection + rotateFullTurnsOrNothing + "deg) rotateY(" + halfYDegree + "deg)";
+            theDice.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(" + rotationDirection + rotateFullTurnsOrNothing + "deg) rotateY(" + halfYDegree + "deg)";
             lastNumber = 4;
             lastXRotation = 0;
             lastYRotation = halfYDegree;
@@ -192,7 +270,7 @@ function rollDice(diceId) {
             if ( randomNumber === lastNumber ) {            
                 quarterYDegree = lastYRotation + 360;              
             }
-            elem.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX("+rotateFullTurnsOrNothing+"deg) rotateY(" + quarterYDegree + "deg)";
+            theDice.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX("+rotateFullTurnsOrNothing+"deg) rotateY(" + quarterYDegree + "deg)";
             lastNumber = 5;
             lastXRotation = 0;
             lastYRotation = quarterYDegree;
@@ -202,7 +280,7 @@ function rollDice(diceId) {
             if ( randomNumber === lastNumber ) {            
                 quarterXDegree = lastXRotation + 360;              
             }
-            elem.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(-" + quarterXDegree +"deg) rotateY("+rotateFullTurnsOrNothing+"deg)";
+            theDice.style.transform = "translateZ( calc(var(--dice-half) * -1)) rotateX(-" + quarterXDegree +"deg) rotateY("+rotateFullTurnsOrNothing+"deg)";
             lastNumber = 6;
             lastXRotation = quarterXDegree;
             lastYRotation = 0;
@@ -212,28 +290,67 @@ function rollDice(diceId) {
             break;
     }
 
-    // Gather Results
-    let splittedId = diceId.split("dice-");  
-    let diceIdNumber = parseInt(splittedId[1])
-    resultBoard[diceIdNumber-1] = randomNumber;
-
-    for ( m = 0; m < resultBoard.length ; m++ ) {
-        // when having multiple dices and rolling a dice that is not the first in the list, the sum may have a NaN
-        if ( typeof resultBoard[m] === "undefined" ) {
-            resultBoard[m] = 0;
-        }
-        totalResult = totalResult + resultBoard[m];
-    }
-
-    score = totalResult;
+    updateScore(diceId, randomNumber, theDiceParentSiblings);
 
     console.log("Result Board: " + resultBoard)
     console.log("Score: " + score)
 
 }
 
-// ADD THE DICE(S)
-let myDiceBoard = document.body;
+function updateScore(diceId, diceScore, diceSiblingsList){
 
-createDice(2, myDiceBoard, false);
-createRollAllButton("my-button", myDiceBoard);
+    let diceSum = 0;
+
+    let theDice = document.getElementById(diceId);
+    let splittedId = diceId.split("dice-");  
+    let diceIdNumber = parseInt(splittedId[1])
+    let diceArrayNumber = diceIdNumber-1;
+    
+    // update the result board
+    resultBoard[diceArrayNumber] = diceScore;
+
+    // update all score
+   
+
+    // update dice score
+    let theDiceWrapper = theDice.parentElement;
+    let theDiceContainer = theDiceWrapper.parentElement;
+    let theDiceList = theDiceContainer.getElementsByClassName('dice-wrapper');
+
+     
+        for ( n = 0 ; n < theDiceList.length ; n++) {
+
+            // targetting the other dice
+            if ( n !== diceArrayNumber ) {          
+                if ( myDiceBoard.classList.contains('roll-all') ) {
+                    // when clicking the roll all button, do nothing
+                } else {
+                    // otherwise, clicking one die will reset the others
+                    resultBoard[n] = 0;
+                }
+            }
+
+            // handle potential problem (might be deprecated now)
+            if ( typeof resultBoard[n] === 'undefined' ) {
+                resultBoard[n] = 0;
+            }
+
+            // calculate the sum
+            diceSum = diceSum + resultBoard[n];
+            
+            // display individual score
+            let diceScoreText = theDiceList[n].getElementsByClassName('dice-score')[0];
+                diceScoreText.innerHTML = "Score: " + resultBoard[n];
+        }
+
+    score = diceSum;
+
+    // display total score
+    let textTotalScore = theDiceContainer.getElementsByClassName('dice-score-total')[0];
+        textTotalScore.innerHTML = "Total score: " + score;   
+
+}
+
+// ADD THE DICE(S)
+createDice(2, myDiceBoard, false, true);
+createRollAllButton("my-button", myDiceBoard, true);
